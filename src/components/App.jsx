@@ -7,15 +7,27 @@ import { Container, MyHeader } from './styled';
 
 class App extends Component {
   state = {
-    contacts: [
-      { id: '123', name: 'fsdf', phone: '+31425367758' },
-      { id: '154', name: 'fshgfdf', phone: '+31425367758' },
-      { id: '15347623', name: 'fsdfsdf', phone: '+31425367758' },
-      { id: '1347623', name: 'fscvbndf', phone: '+31425367758' },
-      { id: '1153623', name: 'fskjkdf', phone: '+31425367758' },
-    ],
+    contacts: [],
     filter: '',
   };
+
+  componentDidMount() {
+    const items = JSON.parse(localStorage.getItem('contacts'));
+
+    if (items === null || items.length === 0) {
+      return;
+    }
+
+    this.setState({ contacts: items });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+
+    if (prevState === this.state.contacts && this.state.contacts.length !== 0) {
+      this.setState({ contacts: JSON.parse(localStorage.getItem('contacts')) });
+    }
+  }
 
   handleSubmitForm = (e, data) => {
     e.preventDefault();
@@ -27,6 +39,7 @@ class App extends Component {
     }
 
     this.setState(prevState => prevState.contacts.push(item));
+
     return true;
   };
 
